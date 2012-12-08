@@ -19,25 +19,6 @@ local Color = {}
 local Color_mt = {__metatable = {}, __index = Color}
 
 -----------------------------------------------------------------------------
--- Instantiates a new "color".
---
--- @param H              hue (0-360) _or_ an RGB string ("#930219")
--- @param S              saturation (0.0-1.0)
--- @param L              lightness (0.0-1.0)
--- @return               an instance of Color
------------------------------------------------------------------------------
-local rgb_string_to_hsl
-
-local
-function new(H, S, L)
-   if type(H) == "string" and H:sub(1,1)=="#" and H:len() == 7 then
-      H, S, L = rgb_string_to_hsl(H)
-   end
-   assert(Color_mt)
-   return setmetatable({H = H, S = S, L = L}, Color_mt)
-end
-
------------------------------------------------------------------------------
 -- Converts an HSL triplet to RGB
 -- (see http://homepages.cwi.nl/~steven/css/hsl.html).
 -- 
@@ -108,7 +89,7 @@ function rgb_to_hsl(r, g, b)
    return h * 360, s, l
 end
 
---local
+local
 function rgb_string_to_hsl(rgb)
    return rgb_to_hsl(tonumber(rgb:sub(2,3), 16)/256, 
                      tonumber(rgb:sub(4,5), 16)/256,
@@ -130,6 +111,23 @@ function Color:to_rgb()
 	  buffer = buffer..string.format("%02x",math.floor(v*256+0.5))
    end
    return buffer
+end
+
+-----------------------------------------------------------------------------
+-- Instantiates a new "color".
+--
+-- @param H              hue (0-360) _or_ an RGB string ("#930219")
+-- @param S              saturation (0.0-1.0)
+-- @param L              lightness (0.0-1.0)
+-- @return               an instance of Color
+-----------------------------------------------------------------------------
+local
+function new(H, S, L)
+   if type(H) == "string" and H:sub(1,1)=="#" and H:len() == 7 then
+      H, S, L = rgb_string_to_hsl(H)
+   end
+   assert(Color_mt)
+   return setmetatable({H = H, S = S, L = L}, Color_mt)
 end
 
 -----------------------------------------------------------------------------
